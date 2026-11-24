@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EDILSERVICE Shop</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* VOICE: bottega di paese seria e ordinata, parla chiaro come al banco.
+   IDEA: il magazzino EDILSERVICE: scaffali di cubi-colli, ognuno un reparto.
+   PICTURE: pila isometrica di cubi nel gradiente del logo, azzurro > verde > giallo.
+   COLOUR and TYPE: bianco dominante, grafite #2f3439, gradiente del logo come accento; Montserrat 800 + Inter.
+   LAYOUT: barra con logo e carrello, banda di ricerca con cubi, reparti, vetrina, catalogo, footer. */
+:root{color-scheme:light dark;
+--bg:light-dark(#ffffff,#121518);--soft:light-dark(#f3f6f7,#1b2024);--line:light-dark(#e2e7ea,#2a3137);
+--ink:light-dark(#2f3439,#eef1f3);--mute:light-dark(#5f6870,#a6b0b8);
+--blue:#0098f0;--green:#1db46a;--yellow:#e6e100;--deep:light-dark(#0a6fb0,#55b8ff);
+--grad:linear-gradient(100deg,#0098f0 0%,#16b27a 50%,#d9e000 100%);--ok:light-dark(#11804a,#4fd48f);--warn:light-dark(#a35b00,#f0b34a)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+html{scroll-padding-top:76px}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Inter,system-ui,sans-serif;overflow-x:clip}
+h1,h2,h3,.brand{font-family:Montserrat,Inter,sans-serif;letter-spacing:-.01em}
+h1{font-size:clamp(30px,5vw,48px);line-height:1.05;margin:0 0 14px;text-wrap:balance;font-weight:800}
+h2{font-size:clamp(22px,3vw,30px);line-height:1.1;margin:0 0 6px;font-weight:800}
+.wrap{max-width:1240px;margin:0 auto}
+.band{padding:clamp(28px,4vw,56px) max(5vw,16px)}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+/* barra */
+header{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.bar{display:flex;align-items:center;gap:14px;padding:10px max(5vw,16px);max-width:1240px;margin:0 auto}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:20px;text-decoration:none;color:var(--ink);white-space:nowrap}
+.brand small{font-size:13px;font-weight:700}
+.brand svg{width:34px;height:34px;flex:none}
+.bar nav{display:flex;gap:4px;margin-left:auto}
+.bar nav a{padding:10px 12px;border-radius:10px;text-decoration:none;color:var(--ink);font-weight:500}
+.bar nav a:hover{background:var(--soft)}
+.cartbtn{display:flex;align-items:center;gap:8px;min-height:44px;padding:0 16px;border:0;border-radius:12px;background:var(--ink);color:var(--bg);font-weight:600}
+.cartbtn b{background:var(--grad);color:#10261a;border-radius:20px;padding:0 8px;font-size:13px;min-width:24px;text-align:center}
+/* hero */
+.hero{background:var(--soft);border-bottom:1px solid var(--line)}
+.herogrid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:32px;align-items:center}
+.hero p.lead{font-size:17px;color:var(--mute);max-width:52ch;margin:0 0 22px}
+.search{display:flex;background:var(--bg);border:2px solid var(--ink);border-radius:14px;overflow:hidden;max-width:620px}
+.search input{flex:1;border:0;padding:14px 16px;font-size:17px;background:transparent;outline:none}
+.search button{border:0;background:var(--grad);color:#10261a;font-weight:700;padding:0 22px}
+.perks{display:flex;flex-wrap:wrap;gap:8px 22px;margin:18px 0 0;padding:0;list-style:none;color:var(--mute);font-size:15px}
+.perks li::before{content:"";display:inline-block;width:9px;height:9px;border-radius:2px;background:var(--grad);margin-right:8px;vertical-align:1px}
+.stack3d{width:100%;max-width:440px;justify-self:end;aspect-ratio:1/0.9}
+/* reparti */
+.cats{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;margin-top:18px}
+.cat{display:flex;flex-direction:column;gap:10px;align-items:flex-start;padding:16px;border:1px solid var(--line);border-radius:16px;background:var(--bg);text-align:left;transition:transform .15s,border-color .15s}
+.cat:hover{transform:translateY(-2px);border-color:var(--blue)}
+.cat svg{width:40px;height:40px}
+.cat strong{font-family:Montserrat,sans-serif;font-size:16px}
+.cat span{font-size:13px;color:var(--mute)}
+.sub{color:var(--mute);margin:0 0 4px}
+/* card prodotto */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-top:18px}
+.card{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--bg)}
+.card .ph{aspect-ratio:4/3;background:var(--soft);display:grid;place-items:center;border:0;padding:0;width:100%}
+.ph img{width:100%;height:100%;object-fit:contain;background:#fff}
+.ph svg{width:46%;height:46%;opacity:.9}
+.card .b{padding:12px 14px 14px;display:flex;flex-direction:column;gap:6px;flex:1}
+.card h3{font:600 15px/1.3 Inter,sans-serif;margin:0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;cursor:pointer}
+.meta{font-size:13px;color:var(--mute)}
+.av{font-size:13px;font-weight:600;color:var(--ok)}.av.w{color:var(--warn)}
+.row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:auto;padding-top:6px}
+.price{font:800 20px/1 Montserrat,sans-serif;white-space:nowrap}
+.price small{font:500 12px Inter,sans-serif;color:var(--mute)}
+.add{min-height:44px;min-width:44px;padding:0 14px;border:0;border-radius:12px;background:var(--ink);color:var(--bg);font-weight:600;white-space:nowrap}
+.add.done{background:var(--green);color:#fff}
+/* catalogo */
+.filters{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:14px}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:4px 0 10px;margin-top:10px;scrollbar-width:thin}
+.chip{flex:none;min-height:40px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:var(--bg);font-size:14px}
+.chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.filters select,.filters input{min-height:44px;border:1px solid var(--line);border-radius:12px;padding:0 12px;background:var(--bg);font-size:16px}
+.filters input{flex:1 1 220px}
+.count{color:var(--mute);font-size:14px;margin:10px 0 0}
+.more{display:block;margin:22px auto 0;min-height:48px;padding:0 26px;border-radius:12px;border:2px solid var(--ink);background:var(--bg);font-weight:600}
+.empty{padding:40px 16px;text-align:center;color:var(--mute)}
+/* pannelli */
+.veil{position:fixed;inset:0;background:rgba(10,14,18,.5);z-index:40;display:none}
+.veil.on{display:block}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(440px,100%);background:var(--bg);z-index:50;transform:translateX(100%);transition:transform .25s;display:flex;flex-direction:column;visibility:hidden}
+.drawer.on{transform:none;visibility:visible;box-shadow:-10px 0 40px rgba(0,0,0,.15)}
+.dh{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--line)}
+.dh h2{margin:0;font-size:22px}
+.x{min-width:44px;min-height:44px;border:0;background:var(--soft);border-radius:12px;font-size:22px;line-height:1}
+.db{flex:1;overflow-y:auto;padding:14px 18px}
+.df{padding:14px 18px;border-top:1px solid var(--line)}
+.line{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 10px;padding:12px 0;border-bottom:1px solid var(--line)}
+.line .n{font-size:14px;font-weight:600}
+.qty{display:flex;align-items:center;border:1px solid var(--line);border-radius:10px;width:max-content}
+.qty button{width:40px;height:40px;border:0;background:none;font-size:18px}
+.qty input{width:52px;text-align:center;border:0;background:none;height:40px;font-size:16px}
+.rm{border:0;background:none;color:var(--mute);text-decoration:underline;font-size:13px;padding:6px 0}
+.tot{display:flex;justify-content:space-between;font:800 20px Montserrat,sans-serif;margin-bottom:6px}
+.note{font-size:13px;color:var(--mute);margin:4px 0 10px}
+.big{width:100%;min-height:52px;border:0;border-radius:14px;background:var(--grad);color:#10261a;font:700 17px Inter,sans-serif;display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none}
+.big.dark{background:var(--ink);color:var(--bg)}
+.big+.big{margin-top:8px}
+form label{display:block;font-size:14px;font-weight:600;margin:12px 0 4px}
+form input,form textarea{width:100%;min-height:46px;border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:16px;background:var(--bg)}
+.opts{display:grid;gap:8px}
+.opt{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:12px;padding:12px;font-weight:500;cursor:pointer;margin:0}
+.opt input{width:20px;min-height:20px;margin-top:3px;accent-color:var(--green)}
+.opt small{display:block;color:var(--mute);font-weight:400}
+.modal{position:fixed;z-index:50;inset:auto 0 0 0;max-height:92vh;overflow-y:auto;background:var(--bg);border-radius:20px 20px 0 0;padding:18px;display:none}
+.modal.on{display:block}
+@media(min-width:760px){.modal{inset:50% auto auto 50%;transform:translate(-50%,-50%);width:min(860px,92vw);border-radius:20px}}
+.mgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px}
+.mgrid .ph{aspect-ratio:1;border-radius:16px;background:var(--soft);display:grid;place-items:center;overflow:hidden;cursor:zoom-in}
+.mgrid .ph.zoom img{transform:scale(1.8);cursor:zoom-out}
+.mgrid .ph img{transition:transform .2s}
+.mgrid h3{font:800 22px/1.2 Montserrat,sans-serif;margin:4px 0 10px}
+.toast{position:fixed;left:50%;bottom:20px;transform:translate(-50%,120px);background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:12px;z-index:60;transition:transform .25s;font-weight:500}
+.toast.on{transform:translate(-50%,0)}
+footer{background:#2f3439;color:#e9edef}
+footer .wrap{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}
+footer h3{font-size:16px;margin:0 0 8px;color:#fff}
+footer p{margin:0;font-size:15px;color:#c3cbd0}
+footer .strip{height:6px;background:var(--grad)}
+.demo{font-size:13px;color:#9aa5ad;margin-top:24px}
+@media(max-width:900px){.cats{grid-template-columns:repeat(3,minmax(0,1fr))}.bar nav{display:none}.cartbtn{margin-left:auto}}
+@media(max-width:600px){.herogrid{grid-template-columns:1fr}.stack3d{order:-1;max-width:220px;justify-self:center}.cats{grid-template-columns:repeat(2,minmax(0,1fr))}.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.card .b{padding:10px}.price{font-size:17px}.add{padding:0 10px}.mgrid{grid-template-columns:1fr}footer .wrap{grid-template-columns:1fr}.brand span.t{font-size:16px}.search button{padding:0 14px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<defs>
+<linearGradient id="lg" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#0098f0"/><stop offset=".5" stop-color="#16b27a"/><stop offset="1" stop-color="#e8e400"/></linearGradient>
+<symbol id="cube" viewBox="0 0 100 110"><path d="M50 8 88 30v50L50 102 12 80V30Z M50 8v0" fill="none" stroke="url(#lg)" stroke-width="11" stroke-linejoin="round"/><path d="M14 31l36 21 36-21M50 52v48" fill="none" stroke="url(#lg)" stroke-width="11" stroke-linejoin="round"/></symbol>
+<symbol id="i0" viewBox="0 0 48 48"><g fill="none" stroke="url(#lg)" stroke-width="3.5" stroke-linejoin="round"><rect x="5" y="9" width="38" height="30" rx="2"/><path d="M5 19h38M5 29h38M18 9v10M30 19v10M18 29v10"/></g></symbol>
+<symbol id="i1" viewBox="0 0 48 48"><g fill="none" stroke="url(#lg)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M30 6a9 9 0 0 0-8 12L7 33a4 4 0 0 0 6 6l15-15a9 9 0 0 0 12-8l-6 2-4-4z"/></g></symbol>
+<symbol id="i2" viewBox="0 0 48 48"><g fill="none" stroke="url(#lg)" stroke-width="3.5" stroke-linejoin="round"><path d="M24 5c7 10 13 17 13 25a13 13 0 0 1-26 0c0-8 6-15 13-25z"/><path d="M18 31a6 6 0 0 0 6 6" stroke-linecap="round"/></g></symbol>
+<symbol id="i3" viewBox="0 0 48 48"><path d="M27 4 10 27h12l-3 17 19-25H26z" fill="none" stroke="url(#lg)" stroke-width="3.5" stroke-linejoin="round"/></symbol>
+<symbol id="i4" viewBox="0 0 48 48"><g fill="none" stroke="url(#lg)" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"><rect x="6" y="6" width="30" height="11" rx="2"/><path d="M36 11h5v10H22v6"/><rect x="18" y="27" width="8" height="16" rx="2"/></g></symbol>
+<symbol id="i5" viewBox="0 0 48 48"><g fill="none" stroke="url(#lg)" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"><path d="M40 7C18 7 9 18 9 31c0 3 1 6 2 9 10-1 29-6 29-33z"/><path d="M8 42c8-12 15-18 24-25"/></g></symbol>
+</defs></svg>
+
+<header><div class="bar">
+  <a class="brand" href="#top" aria-label="EDILSERVICE, inizio"><svg><use href="#cube"/></svg><span class="t">EDILSERVICE <small>srl</small></span></a>
+  <nav aria-label="Sezioni"><a href="#reparti">Reparti</a><a href="#vetrina">Offerte</a><a href="#catalogo">Catalogo</a><a href="#contatti">Contatti</a></nav>
+  <button class="cartbtn" id="openCart" aria-label="Apri il carrello">Carrello <b id="cartCount">0</b></button>
+</div></header>
+
+<main id="top">
+<section class="hero band"><div class="wrap herogrid">
+  <div>
+    <h1>Tutto per costruire, riparare e colorare. Ordini online, ritiri in negozio.</h1>
+    <p class="lead">Ferramenta, materiale edile, idraulica, elettrico, colori e giardino a Magliano Sabina. Vedi solo articoli disponibili a magazzino, con prezzi IVA inclusa.</p>
+    <form class="search" id="heroSearch" role="search"><input id="heroQ" type="search" placeholder="Cerca: cemento, silicone, rubinetto…" aria-label="Cerca un articolo"><button type="submit">Cerca</button></form>
+    <ul class="perks"><li>Ritiro in negozio gratuito</li><li>Consegna in zona su preventivo</li><li><span id="nItems">—</span> articoli disponibili</li></ul>
+  </div>
+  <svg class="stack3d" viewBox="0 0 440 396" role="img" aria-label="Colli del magazzino EDILSERVICE impilati">
+    <defs>
+      <linearGradient id="t1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5cc4ff"/><stop offset="1" stop-color="#3fd29a"/></linearGradient>
+      <linearGradient id="l1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0098f0"/><stop offset="1" stop-color="#0a78c2"/></linearGradient>
+      <linearGradient id="r1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#16b27a"/><stop offset="1" stop-color="#0f8f60"/></linearGradient>
+      <linearGradient id="t2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#b8ec5a"/><stop offset="1" stop-color="#f4f04a"/></linearGradient>
+      <linearGradient id="l2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5fc85a"/><stop offset="1" stop-color="#3ea84a"/></linearGradient>
+      <linearGradient id="r2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d9e000"/><stop offset="1" stop-color="#b9bf00"/></linearGradient>
+      <g id="bx1"><path d="M0-40 70 0 0 40-70 0Z" fill="url(#t1)"/><path d="M-70 0 0 40v80l-70-40Z" fill="url(#l1)"/><path d="M70 0 0 40v80l70-40Z" fill="url(#r1)"/><path d="M-70 0 0-40 70 0" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="2"/></g>
+      <g id="bx2"><path d="M0-40 70 0 0 40-70 0Z" fill="url(#t2)"/><path d="M-70 0 0 40v80l-70-40Z" fill="url(#l2)"/><path d="M70 0 0 40v80l70-40Z" fill="url(#r2)"/><path d="M-70 0 0-40 70 0" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="2"/></g>
+    </defs>
+    <ellipse cx="220" cy="350" rx="190" ry="34" fill="#2f3439" opacity=".12"/>
+    <use href="#bx1" x="150" y="230"/><use href="#bx2" x="290" y="230"/><use href="#bx2" x="220" y="270"/>
+    <use href="#bx1" x="220" y="190"/>
+    <use href="#bx2" x="220" y="110"/>
+  </svg>
+</div></section>
+
+<section class="band" id="reparti"><div class="wrap">
+  <h2>Reparti</h2><p class="sub">Scegli un reparto per vedere tutti gli articoli disponibili.</p>
+  <div class="cats" id="cats"></div>
+</div></section>
+
+<section class="band" id="vetrina" style="background:var(--soft)"><div class="wrap">
+  <h2>In vetrina questa settimana</h2><p class="sub">Una selezione dal magazzino, si rinnova a ogni aggiornamento del catalogo.</p>
+  <div class="grid" id="vet"></div>
+</div></section>
+
+<section class="band" id="catalogo"><div class="wrap">
+  <h2 id="catTitle">Catalogo</h2>
+  <div class="filters">
+    <input id="q" type="search" placeholder="Cerca per nome, marca o codice" aria-label="Cerca nel catalogo">
+    <select id="dep" aria-label="Reparto"></select>
+    <select id="sort" aria-label="Ordina"><option value="n">Nome A-Z</option><option value="pa">Prezzo crescente</option><option value="pd">Prezzo decrescente</option></select>
+  </div>
+  <div class="chips" id="chips" aria-label="Sottocategorie"></div>
+  <p class="count" id="count"></p>
+  <div class="grid" id="list"></div>
+  <button class="more" id="more" hidden>Mostra altri articoli</button>
+</div></section>
+</main>
+
+<footer id="contatti"><div class="strip"></div><div class="band"><div class="wrap">
+  <div><h3>EDILSERVICE srl</h3><p>Magliano Sabina (RI)<br>P. IVA 01175640570<br>WhatsApp <a style="color:#fff" href="https://wa.me/393283853585">328 3853585</a><br><a style="color:#fff" href="mailto:edil.service2k18@gmail.com">edil.service2k18@gmail.com</a></p></div>
+  <div><h3>Orari negozio</h3><p>Lun-Ven 07:00-13:00 e 14:30-19:00<br>Sabato 07:00-13:00</p></div>
+  <div><h3>Come funziona</h3><p>Scegli gli articoli, invia l'ordine su WhatsApp o per email. Ti confermiamo disponibilità e, se serve, il costo della consegna. Paghi al ritiro o alla consegna.</p></div>
+</div><p class="wrap demo">Prezzi IVA inclusa, aggiornati all'ultimo caricamento del magazzino. Le foto sono indicative.</p></div></footer>
+
+<div class="veil" id="veil"></div>
+
+<aside class="drawer" id="drawer" aria-label="Carrello">
+  <div class="dh"><h2 id="dTitle">Il tuo carrello</h2><button class="x" id="closeCart" aria-label="Chiudi">×</button></div>
+  <div class="db" id="dBody"></div>
+  <div class="df" id="dFoot"></div>
+</aside>
+
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mName"></div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+{
+/* ===== IMPOSTAZIONI: da completare ===== */
+const CONFIG={
+  whatsapp:'393283853585', // numero WhatsApp ordini (328 3853585)
+  email:'edil.service2k18@gmail.com', // email per gli ordini
+  immagini:'img/'         // cartella delle foto esportate da LibertyCommerce
+};
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const eur=n=>n.toLocaleString('it-IT',{style:'currency',currency:'EUR'});
+const SLUG=['edilizia','ferramenta','idraulica','elettrico','colori','giardino'];
+let D=null,cart={},cur={c:-1,s:-1,q:'',sort:'n',shown:24},imgOK=true;
+try{cart=JSON.parse(localStorage.getItem('es_cart')||'{}')}catch(e){cart={}}
+const save=()=>{try{localStorage.setItem('es_cart',JSON.stringify(cart))}catch(e){}};
+const icon=c=>`<svg aria-hidden="true"><use href="#i${c}"/></svg>`;
+const pic=it=>it[7]&&imgOK?`<img loading="lazy" alt="" src="${esc(CONFIG.immagini+it[7])}" onerror="this.replaceWith(Object.assign(document.createElement('span'),{innerHTML:'${icon(it[2]).replace(/"/g,'&quot;')}'}))">`:icon(it[2]);
+const unit=u=>u&&u.toLowerCase()!=='pz'?` <small>al ${esc(u.toLowerCase())}</small>`:'';
+function card(i){const it=D.items[i],inC=cart[it[0]];
+  return `<article class="card"><button class="ph" data-open="${i}" aria-label="Dettagli ${esc(it[1])}">${pic(it)}</button>
+  <div class="b"><h3 data-open="${i}">${esc(it[1])}</h3><div class="meta">${esc(D.subs[it[3]][1])}${it[8]?' · '+esc(it[8]):''}</div>
+  <div class="av${it[6]?' w':''}">${it[6]?'Ultimi pezzi':'Disponibile'}</div>
+  <div class="row"><span class="price">${eur(it[4])}${unit(it[5])}</span><button class="add${inC?' done':''}" data-add="${i}">${inC?'✓ '+inC.q:'Aggiungi'}</button></div></div></article>`}
+function cats(){const n=[0,0,0,0,0,0];D.items.forEach(x=>n[x[2]]++);
+  $('#cats').innerHTML=D.cats.map((c,i)=>`<button class="cat" data-cat="${i}">${icon(i)}<strong>${esc(c)}</strong><span>${n[i].toLocaleString('it-IT')} articoli</span></button>`).join('');
+  $('#dep').innerHTML='<option value="-1">Tutti i reparti</option>'+D.cats.map((c,i)=>`<option value="${i}">${esc(c)}</option>`).join('');}
+const norm=s=>s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+function filtered(){const w=norm(cur.q).split(/\s+/).filter(Boolean);
+  let r=[];D.items.forEach((x,i)=>{if(cur.c>=0&&x[2]!==cur.c)return;if(cur.s>=0&&x[3]!==cur.s)return;
+    if(w.length){const h=x._h||(x._h=norm(x[1]+' '+x[0]+' '+x[8]+' '+D.subs[x[3]][1]));if(!w.every(t=>h.includes(t)))return}r.push(i)});
+  if(cur.sort==='pa')r.sort((a,b)=>D.items[a][4]-D.items[b][4]);
+  if(cur.sort==='pd')r.sort((a,b)=>D.items[b][4]-D.items[a][4]);
+  return r}
+function render(){const r=filtered();
+  $('#catTitle').textContent=cur.c>=0?D.cats[cur.c]:'Catalogo';
+  if(cur.c>=0){const ss=[];D.subs.forEach((s,i)=>{if(s[0]===cur.c)ss.push(i)});ss.sort((a,b)=>D.subs[a][1].localeCompare(D.subs[b][1]));
+    $('#chips').innerHTML=`<button class="chip${cur.s<0?' on':''}" data-sub="-1">Tutto</button>`+ss.map(i=>`<button class="chip${cur.s===i?' on':''}" data-sub="${i}">${esc(D.subs[i][1])}</button>`).join('');$('#chips').hidden=false}
+  else{$('#chips').innerHTML='';$('#chips').hidden=true}
+  $('#count').textContent=r.length.toLocaleString('it-IT')+(r.length===1?' articolo':' articoli');
+  $('#list').innerHTML=r.length?r.slice(0,cur.shown).map(card).join(''):`<p class="empty">Nessun articolo trovato. Prova con un'altra parola o chiamaci: se non è online, spesso lo ordiniamo in pochi giorni.</p>`;
+  $('#more').hidden=r.length<=cur.shown}
+function go(c,s){cur.c=c;cur.s=s??-1;cur.shown=24;$('#dep').value=c;render();
+  const h=c>=0?SLUG[c]:'catalogo';if(location.hash!=='#'+h)history.replaceState(null,'','#'+h);
+  $('#catalogo').scrollIntoView({behavior:'smooth'})}
+/* carrello */
+const count=()=>Object.values(cart).reduce((a,b)=>a+b.q,0);
+const total=()=>Object.values(cart).reduce((a,b)=>a+b.q*b.p,0);
+function refreshBadges(){$('#cartCount').textContent=count();
+  document.querySelectorAll('[data-add]').forEach(b=>{const it=D.items[+b.dataset.add],c=cart[it[0]];b.classList.toggle('done',!!c);b.textContent=c?'✓ '+c.q:'Aggiungi'})}
+function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('on'),1800)}
+function add(i,q=1){const it=D.items[i],k=it[0];cart[k]=cart[k]||{n:it[1],p:it[4],u:it[5],q:0};cart[k].q+=q;save();refreshBadges();toast('Aggiunto: '+it[1].slice(0,40))}
+let step='cart';
+function drawCart(){const ks=Object.keys(cart);
+  if(step==='cart'){$('#dTitle').textContent='Il tuo carrello';
+    $('#dBody').innerHTML=ks.length?ks.map(k=>{const c=cart[k];return `<div class="line"><div class="n">${esc(c.n)}<div class="meta">Cod. ${esc(k)} · ${eur(c.p)}${c.u.toLowerCase()!=='pz'?' al '+esc(c.u.toLowerCase()):''}</div></div><strong style="white-space:nowrap">${eur(c.p*c.q)}</strong>
+      <div class="qty"><button data-q="${esc(k)}" data-d="-1" aria-label="Meno">−</button><input inputmode="numeric" value="${c.q}" data-qi="${esc(k)}" aria-label="Quantità"><button data-q="${esc(k)}" data-d="1" aria-label="Più">+</button></div><button class="rm" data-rm="${esc(k)}">Rimuovi</button></div>`}).join(''):'<p class="empty">Il carrello è vuoto.<br>Cerca un articolo o sfoglia i reparti.</p>';
+    $('#dFoot').innerHTML=ks.length?`<div class="tot"><span>Totale</span><span>${eur(total())}</span></div><p class="note">IVA inclusa. Eventuale consegna esclusa.</p><button class="big" id="toCheckout">Procedi con l'ordine</button>`:''}
+  else if(step==='form'){$('#dTitle').textContent='I tuoi dati';
+    let f={};try{f=JSON.parse(localStorage.getItem('es_cli')||'{}')}catch(e){}
+    $('#dBody').innerHTML=`<form id="cf" novalidate><label for="fn">Nome e cognome o ragione sociale</label><input id="fn" required autocomplete="name" value="${esc(f.n||'')}">
+    <label for="ft">Telefono</label><input id="ft" type="tel" required autocomplete="tel" value="${esc(f.t||'')}">
+    <label for="fe">Email (facoltativa)</label><input id="fe" type="email" autocomplete="email" value="${esc(f.e||'')}">
+    <label>Come vuoi ricevere la merce?</label><div class="opts">
+    <label class="opt"><input type="radio" name="mode" value="ritiro" checked><span>Ritiro in negozio<small>Gratis. Ti avvisiamo quando è pronto.</small></span></label>
+    <label class="opt"><input type="radio" name="mode" value="consegna"><span>Consegna<small>Ti mandiamo prima il costo del trasporto.</small></span></label></div>
+    <div id="addrBox" hidden><label for="fa">Indirizzo di consegna</label><input id="fa" autocomplete="street-address" value="${esc(f.a||'')}"></div>
+    <label for="fno">Note</label><textarea id="fno" rows="2" placeholder="Es. fattura a nome azienda, orario preferito"></textarea><p class="note" id="ferr" style="color:var(--warn)"></p></form>`;
+    $('#dFoot').innerHTML=`<div class="tot"><span>Totale</span><span>${eur(total())}</span></div><button class="big" id="toSend">Prepara l'ordine</button><button class="big dark" id="back">Torna al carrello</button>`}
+  else{$('#dTitle').textContent='Invia l\'ordine';
+    const t=orderText();const wa='https://wa.me/'+(CONFIG.whatsapp||'')+'?text='+encodeURIComponent(t);
+    const ml='mailto:'+(CONFIG.email||'')+'?subject='+encodeURIComponent('Ordine online '+ord.id)+'&body='+encodeURIComponent(t);
+    $('#dBody').innerHTML=`<p>Ordine <strong>${esc(ord.id)}</strong> pronto. Invialo con WhatsApp o per email: ti rispondiamo con la conferma.</p><pre style="white-space:pre-wrap;background:var(--soft);padding:12px;border-radius:12px;font-size:13px">${esc(t)}</pre>`;
+    $('#dFoot').innerHTML=`<a class="big" href="${esc(wa)}" target="_blank" rel="noopener">Invia su WhatsApp</a><a class="big dark" href="${esc(ml)}">Invia per email</a><button class="big dark" id="copy" style="background:var(--soft);color:var(--ink)">Copia il testo</button><button class="rm" id="newOrder" style="display:block;margin:10px auto 0">Ordine inviato, svuota il carrello</button>`}}
+let ord={};
+function orderText(){const L=Object.keys(cart).map(k=>{const c=cart[k];return `• ${c.q} x ${c.n} (cod. ${k}) = ${eur(c.p*c.q)}`});
+  return `ORDINE ${ord.id} - EDILSERVICE\n\n${L.join('\n')}\n\nTotale: ${eur(total())} IVA inclusa\n\nCliente: ${ord.n}\nTelefono: ${ord.t}${ord.e?'\nEmail: '+ord.e:''}\n${ord.m==='consegna'?'Consegna a: '+ord.a+' (attendo costo trasporto)':'Ritiro in negozio'}${ord.no?'\nNote: '+ord.no:''}`}
+function openCart(){step='cart';drawCart();$('#drawer').classList.add('on');$('#veil').classList.add('on')}
+function closeAll(){$('#drawer').classList.remove('on');$('#modal').classList.remove('on');$('#veil').classList.remove('on')}
+function openItem(i){const it=D.items[i];
+  $('#modal').innerHTML=`<div style="display:flex;justify-content:flex-end"><button class="x" data-close aria-label="Chiudi">×</button></div><div class="mgrid"><div class="ph" id="zoom" title="Tocca per ingrandire">${pic(it)}</div>
+  <div><div class="meta">${esc(D.cats[it[2]])} › ${esc(D.subs[it[3]][1])}</div><h3 id="mName">${esc(it[1])}</h3>
+  ${it[8]?`<p class="meta">Marca: ${esc(it[8])}</p>`:''}<p class="meta">Codice articolo: ${esc(it[0])}</p>
+  <p class="av${it[6]?' w':''}">${it[6]?'Ultimi pezzi disponibili':'Disponibile in negozio'}</p>
+  <p class="price" style="font-size:30px;margin:16px 0">${eur(it[4])}${unit(it[5])}</p><p class="note">IVA inclusa</p>
+  <div style="display:flex;gap:10px;align-items:center;margin-top:12px"><div class="qty"><button data-mq="-1" aria-label="Meno">−</button><input id="mq" inputmode="numeric" value="1" aria-label="Quantità"><button data-mq="1" aria-label="Più">+</button></div>
+  <button class="big" style="flex:1" data-madd="${i}">Aggiungi al carrello</button></div></div></div>`;
+  $('#modal').classList.add('on');$('#veil').classList.add('on')}
+document.addEventListener('click',e=>{const t=e.target.closest('button,a,.ph,h3,.veil');if(!t)return;const d=t.dataset;
+  if(d.add!==undefined)add(+d.add);
+  else if(d.open!==undefined)openItem(+d.open);
+  else if(d.cat!==undefined)go(+d.cat);
+  else if(d.sub!==undefined){cur.s=+d.sub;cur.shown=24;render()}
+  else if(d.madd!==undefined){add(+d.madd,Math.max(1,parseInt($('#mq').value)||1));closeAll()}
+  else if(d.mq!==undefined){const m=$('#mq');m.value=Math.max(1,(parseInt(m.value)||1)+ +d.mq)}
+  else if(d.q!==undefined){const c=cart[d.q];c.q=Math.max(1,c.q+ +d.d);save();drawCart();refreshBadges()}
+  else if(d.rm!==undefined){delete cart[d.rm];save();drawCart();refreshBadges()}
+  else if(d.close!==undefined||t.id==='veil'||t.id==='closeCart')closeAll();
+  else if(t.id==='openCart')openCart();
+  else if(t.id==='zoom')t.classList.toggle('zoom');
+  else if(t.id==='more'){cur.shown+=24;render()}
+  else if(t.id==='toCheckout'){step='form';drawCart();$('#cf').addEventListener('change',()=>{$('#addrBox').hidden=$('#cf').mode.value!=='consegna'})}
+  else if(t.id==='back'){step='cart';drawCart()}
+  else if(t.id==='toSend'){const f=$('#cf'),n=$('#fn').value.trim(),tel=$('#ft').value.trim(),m=f.mode.value,a=$('#fa').value.trim();
+    if(!n||tel.replace(/\D/g,'').length<6){$('#ferr').textContent='Inserisci nome e un numero di telefono valido.';return}
+    if(m==='consegna'&&!a){$('#ferr').textContent='Inserisci l\'indirizzo di consegna.';return}
+    const dt=new Date();ord={id:'W'+String(dt.getFullYear()).slice(2)+String(dt.getMonth()+1).padStart(2,'0')+String(dt.getDate()).padStart(2,'0')+'-'+String(dt.getHours()*60+dt.getMinutes()).padStart(4,'0'),n,t:tel,e:$('#fe').value.trim(),m,a,no:$('#fno').value.trim()};
+    try{localStorage.setItem('es_cli',JSON.stringify({n,t:tel,e:ord.e,a}))}catch(e){}
+    step='send';drawCart()}
+  else if(t.id==='copy'){navigator.clipboard.writeText(orderText()).then(()=>toast('Testo copiato'),()=>toast('Copia non riuscita: seleziona il testo'))}
+  else if(t.id==='newOrder'){cart={};save();refreshBadges();step='cart';drawCart()}
+});
+document.addEventListener('change',e=>{const k=e.target.dataset.qi;if(k&&cart[k]){cart[k].q=Math.max(1,parseInt(e.target.value)||1);save();drawCart();refreshBadges()}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeAll()});
+let qt;$('#q').addEventListener('input',e=>{clearTimeout(qt);qt=setTimeout(()=>{cur.q=e.target.value;cur.shown=24;render()},180)});
+$('#dep').addEventListener('change',e=>{cur.c=+e.target.value;cur.s=-1;cur.shown=24;render()});
+$('#sort').addEventListener('change',e=>{cur.sort=e.target.value;render()});
+$('#heroSearch').addEventListener('submit',e=>{e.preventDefault();cur.q=$('#heroQ').value;$('#q').value=cur.q;go(-1)});
+function fromHash(){const h=location.hash.slice(1),i=SLUG.indexOf(h);if(i>=0)go(i);else if(h==='catalogo')go(-1)}
+window.addEventListener('hashchange',fromHash);
+fetch('data.json').then(r=>r.json()).then(d=>{D=d;
+  /* senza cartella immagini online, mostra le icone di reparto */
+  if(!CONFIG.immagini)imgOK=false;
+  $('#nItems').textContent=D.items.length.toLocaleString('it-IT');cats();
+  $('#vet').innerHTML=D.vetrina.map(card).join('');render();refreshBadges();fromHash()})
+ .catch(()=>{$('#list').innerHTML='<p class="empty">Catalogo non disponibile al momento. Riprova tra poco.</p>'});
+}
+</script>
+</body>
+</html>
