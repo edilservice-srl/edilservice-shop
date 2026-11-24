@@ -11,27 +11,32 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Scarica foto Cardinale
+      - name: Scarica foto fornitori
         run: |
           python3 - <<'EOF'
           import json, os, urllib.request, time
-          BASE = "http://cloudhub.cardinaleferramentaspa.it/Resources/Bitmaps/"
+          HOST = {"c": ["cardinaleferramentaspa", "aeffeservices"],
+                  "a": ["aeffeservices", "cardinaleferramentaspa"]}
           d = json.load(open("data.json", encoding="utf-8"))
-          paths = sorted({x[7] for x in d["items"] if x[7].startswith("c/")})
-          os.makedirs("img/c", exist_ok=True)
+          paths = sorted({x[7] for x in d["items"] if x[7][:2] in ("c/", "a/")})
           ok = miss = 0
           for p in paths:
               dest = os.path.join("img", p)
+              os.makedirs(os.path.dirname(dest), exist_ok=True)
               if os.path.exists(dest) or os.path.exists(dest + ".missing"):
                   continue
-              try:
-                  req = urllib.request.Request(BASE + os.path.basename(p), headers={"User-Agent": "Mozilla/5.0"})
-                  data = urllib.request.urlopen(req, timeout=20).read()
-                  if len(data) > 800 and data[:3] == b"\xff\xd8\xff":
-                      open(dest, "wb").write(data); ok += 1
-                  else:
-                      open(dest + ".missing", "w").close(); miss += 1
-              except Exception:
+              got = False
+              for h in HOST[p[0]]:
+                  url = f"http://cloudhub.{h}.it/Resources/Bitmaps/" + os.path.basename(p)
+                  try:
+                      req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+                      data = urllib.request.urlopen(req, timeout=20).read()
+                      if len(data) > 800 and data[:3] == b"\xff\xd8\xff":
+                          open(dest, "wb").write(data); got = True; break
+                  except Exception:
+                      pass
+              if got: ok += 1
+              else:
                   open(dest + ".missing", "w").close(); miss += 1
               time.sleep(0.15)
           print(f"scaricate {ok}, non trovate {miss}")
