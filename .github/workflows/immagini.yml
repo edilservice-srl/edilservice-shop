@@ -1,0 +1,44 @@
+name: Scarica immagini fornitori
+on:
+  push:
+    branches: [main]
+    paths: [data.json]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  immagini:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Scarica foto Cardinale
+        run: |
+          python3 - <<'EOF'
+          import json, os, urllib.request, time
+          BASE = "http://cloudhub.cardinaleferramentaspa.it/Resources/Bitmaps/"
+          d = json.load(open("data.json", encoding="utf-8"))
+          paths = sorted({x[7] for x in d["items"] if x[7].startswith("c/")})
+          os.makedirs("img/c", exist_ok=True)
+          ok = miss = 0
+          for p in paths:
+              dest = os.path.join("img", p)
+              if os.path.exists(dest) or os.path.exists(dest + ".missing"):
+                  continue
+              try:
+                  req = urllib.request.Request(BASE + os.path.basename(p), headers={"User-Agent": "Mozilla/5.0"})
+                  data = urllib.request.urlopen(req, timeout=20).read()
+                  if len(data) > 800 and data[:3] == b"\xff\xd8\xff":
+                      open(dest, "wb").write(data); ok += 1
+                  else:
+                      open(dest + ".missing", "w").close(); miss += 1
+              except Exception:
+                  open(dest + ".missing", "w").close(); miss += 1
+              time.sleep(0.15)
+          print(f"scaricate {ok}, non trovate {miss}")
+          EOF
+      - name: Salva le foto
+        run: |
+          git config user.name "edilservice-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add img
+          git diff --cached --quiet || (git commit -m "Aggiorna immagini prodotti" && git push)
